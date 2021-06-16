@@ -15,6 +15,8 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 
+from sklearn import metrics
+
 class Embeddings(nn.Module):
     """Construct the embeddings from protein/target, position embeddings.
     """

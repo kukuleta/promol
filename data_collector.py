@@ -9,12 +9,13 @@ Original file is located at
 
 import os
 import sys
+import urllib.error
 import urllib.request as request
 import string
 from pathlib import Path
 
 
-import pandas as pd
+#import pandas as pd
 
 """#### Evaluation Benchmark dataset collection in MolTrans Paper"""
 
@@ -27,11 +28,25 @@ file_type = "csv"
 
 BASE_URL = "https://raw.githubusercontent.com/kexinhuang12345/MolTrans/master/dataset/"
 
-Path("repurpose").mkdir(exist_ok=True)
-request.urlretrieve("https://dataverse.harvard.edu/api/access/datafile/4159648", Path("repurpose")  / ("broad_institute_repurpose_hub.tsv"))
-request.urlretrieve("https://s3.amazonaws.com/data.clue.io/repurposing/downloads/repurposing_drugs_20200324.txt", Path("repurpose")  / ("clue_repurpose_drugs.txt"))
-request.urlretrieve("https://s3.amazonaws.com/data.clue.io/repurposing/downloads/repurposing_samples_20180907.txt", Path("repurpose")  / ("clue_repurpose_metadata.txt"))
+Path("data").mkdir(exist_ok=True)
+DATA_DIR = Path("data") / "repurpose"
+DATA_DIR.mkdir(exist_ok=True)
 
+repurpose_hub_url_list = ["https://dataverse.harvard.edu/api/access/datafile/4159648",
+                          "https://s3.amazonaws.com/data.clue.io/repurposing/downloads/repurposing_drugs_20200324.txt",
+                          "https://s3.amazonaws.com/data.clue.io/repurposing/downloads/repurposing_samples_20180907.txt"]
+
+url_file_names = ["broad_institute_repurpose_hub.tsv",
+                  "clue_repurpose_drugs.txt",
+                  "clue_repurpose_metadata.txt"]
+
+for url, file_name in zip(repurpose_hub_url_list, url_file_names):
+    try:
+        request.urlretrieve(url, DATA_DIR / file_name)
+    except urllib.error.HTTPError:
+        print(f"An error encountered in retrieving filename from {url}")
+    else:
+        print(f"Downloaded {url} to {file_name}")
 
 for dataset in datasets:
     (data_path / dataset).mkdir(exist_ok=True)

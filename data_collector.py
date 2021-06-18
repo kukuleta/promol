@@ -125,7 +125,7 @@ def train_val_test_split(X,
     
     return X_train, X_val, X_test, Y_train, Y_val, Y_test
 
-unified_data = pd.read_csv("/content/benchmarks/AllDB/data.csv", index_col=0)
+unified_data = pd.read_csv("benchmarks/AllDB/data.csv", index_col=0)
 X_train, X_val, X_test, Y_train, Y_val, Y_test = train_val_test_split(unified_data.drop(columns=["Label"]),
                      unified_data["Label"],
                      test_size=0.2,
@@ -144,4 +144,4 @@ data.query("Dataset == 'train'").index.values.tofile(data_path / "AllDB" / ("tra
 data.query("Dataset == 'test'").index.values.tofile(data_path / "AllDB" / ("test" + "_" + "indices.bin"))
 data.query("Dataset == 'val'").index.values.tofile(data_path / "AllDB" / ("val" + "_" + "indices.bin"))
 
-data.to_csv("/content/benchmarks/AllDB/data.csv", index=False)
+data.to_csv("benchmarks/AllDB/data.csv", index=False)

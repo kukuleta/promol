@@ -14,8 +14,7 @@ import urllib.request as request
 import string
 from pathlib import Path
 
-
-#import pandas as pd
+import pandas as pd
 
 """#### Evaluation Benchmark dataset collection in MolTrans Paper"""
 

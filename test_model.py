@@ -5,10 +5,11 @@ def get_predictions(model, dataset, callback_fn=None):
 
     preds = []
     model.eval()
+    dev = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
 
     with torch.no_grad():
         for idx, args in enumerate(dataset):
-            model_preds = model(*args[:-1])
+            model_preds = model(*[x.to(dev) for x in args[:-1]])
 
             if callback_fn:
               model_preds = callback_fn(model_preds)

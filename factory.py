@@ -17,13 +17,13 @@ import pandas as pd
 from rdkit.Chem import AllChem as Chem
 
 BASE_MODEL_DIR = Path("releases") / "download"
-LATEST_VERSION = "v0.1-weights"
+LATEST_VERSION = "v0.2-weights"
 
 model_names = list(map(lambda x: x.name.split("_")[0], list((BASE_MODEL_DIR / LATEST_VERSION).iterdir())))
 model_paths = dict(zip(map(lambda x: x.name.split("_")[0], list((BASE_MODEL_DIR / LATEST_VERSION).iterdir())),
                        map(lambda x: x.name, list((BASE_MODEL_DIR / LATEST_VERSION).iterdir()))))
 
-def create_model(model_name, version="v0.1-weights", model_path=None, pretrained=False, pl_model=True, cache=True):
+def create_model(model_name, version=LATEST_VERSION, model_path=None, pretrained=False, pl_model=True, cache=True):
 
     if not model_name in model_names:
         raise ValueError("Expected one of model names({}), but got".format(",".join(model_names)))
@@ -41,28 +41,28 @@ def create_model(model_name, version="v0.1-weights", model_path=None, pretrained
     state_getter = torch.load
 
     if pretrained:
-      base_model_path = "promol"
+        base_model_path = "."
 
-      if not cache:
-          base_model_path = "https://github.com/kukuleta/promol/tree/main/"
-          state_getter = load_state_dict_from_url
+        if not cache:
+           base_model_path = "https://github.com/kukuleta/promol/tree/main/"
+           state_getter = load_state_dict_from_url
 
-      pretrained_model_path =  '{base_path}/releases/download/{version}/{model_name}'.format(base_path=base_model_path,
+        pretrained_model_path = '{base_path}/releases/download/{version}/{model_name}'.format(base_path=base_model_path,
                                                                                            version=version,
                                                                                            model_name=model_paths[model_name])
-      
-      state_dict = state_getter(pretrained_model_path, map_location=dev)
 
-      if pl_model:
-        state_dict = state_dict["state_dict"]
+        state_dict = state_getter(pretrained_model_path, map_location=dev)
 
-    model.load_state_dict(state_dict)
+        if pl_model:
+            state_dict = state_dict["state_dict"]
+
+        model.load_state_dict(state_dict)
+
     model.to(dev)
 
     return model
 
 def create_dataset_iterable(model_name, dataset_path, indexes=None, dataset_kwargs=None, loader_kwargs=None):
-
 
     with open(f"{model_name}.yml", 'r') as stream:
         try:
